@@ -21,7 +21,7 @@ export class AuthGuard implements CanActivate {
       const payload = this.jwtService.verify(authorization, {
         secret: process.env.SECRET_KEY,
       });
-      request.user = payload;
+      request['sub'] = payload;
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       throw new UnauthorizedException('Invalid token.');
