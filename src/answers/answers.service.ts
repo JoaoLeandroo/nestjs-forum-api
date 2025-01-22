@@ -10,14 +10,14 @@ export class AnswersService {
 
   async create(
     createAnswerDto: CreateAnswerDto,
-    userId: number,
+    userId: any,
     questionId: number,
   ) {
     const newAnswer = {
       body: createAnswerDto.body,
       user: {
         connect: {
-          id: userId,
+          id: userId.sub,
         },
       },
       question: {
@@ -32,25 +32,42 @@ export class AnswersService {
     });
   }
 
-  findAll() {
-    return this.prisma.questions.findMany();
-  }
-
-  findOne(id: number) {
-    return this.prisma.questions.findUnique({
-      where: { id },
+  async findAll() {
+    return await this.prisma.questions.findMany({
+      include: {
+        answers: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
   }
 
-  update(id: number, updateAnswerDto: UpdateAnswerDto) {
-    return this.prisma.questions.update({
+  async findOne(id: number) {
+    return await this.prisma.questions.findUnique({
+      where: { id },
+      include: {
+        answers: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+  }
+
+  async update(id: number, updateAnswerDto: UpdateAnswerDto) {
+    return await this.prisma.questions.update({
       where: { id },
       data: { ...updateAnswerDto },
     });
   }
 
-  remove(id: number) {
-    return this.prisma.questions.delete({
+  async remove(id: number) {
+    return await this.prisma.questions.delete({
       where: { id },
     });
   }
